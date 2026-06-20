@@ -1,0 +1,24 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: docker build -t flask-hello .
+
+      - name: Run the container
+        run: docker run -d -p 8080:5000 --name test-app flask-hello
+
+      - name: Test the app responds
+        run: |
+          sleep 3
+          curl --fail http://localhost:8080
